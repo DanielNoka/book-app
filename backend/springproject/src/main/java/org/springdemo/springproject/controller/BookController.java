@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@CrossOrigin(origins = "http://localhost:3000") //lejon thirrjet nga react
+//@CrossOrigin(origins = "http://localhost:3000") //lejon thirrjet nga react
 @RestController
 @RequestMapping("/book")
 public class BookController {

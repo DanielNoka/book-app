@@ -1,0 +1,24 @@
+package org.springdemo.springproject.config;
+
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration //ben qe thirrja te jete automatike
+public class CorsConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // Lejon te gjitha endpointet
+                        .allowedOrigins("http://localhost:3000") // Lejon  kerkesast vetem nga kjo porte
+                        .allowedMethods("GET", "POST", "PUT", "DELETE"); // Metodat qe lejohen
+            }
+        };
+    }
+}
+
