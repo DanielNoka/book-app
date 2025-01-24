@@ -6,7 +6,6 @@ import lombok.*;
 @Getter
 @Setter
 public class BookUpdateDto {
-    private Long id;
     private String title;
     private String author;
     private LocalDate publishYear;
