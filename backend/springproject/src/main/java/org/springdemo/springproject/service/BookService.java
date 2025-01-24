@@ -1,5 +1,7 @@
 package org.springdemo.springproject.service;
 
+import org.springdemo.springproject.dto.BookCreateDto;
+import org.springdemo.springproject.dto.BookUpdateDto;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +24,22 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public Book createBook(Book book) {
-        return bookRepository.save(book);
+    public Book createBook(BookCreateDto book) {
+        Book newbook = new Book();
+        newbook.setTitle(book.getTitle());
+        newbook.setAuthor(book.getAuthor());
+        newbook.setPublishYear(book.getPublishYear());
+        return bookRepository.save(newbook);
     }
 
-    public Book updateBook(Long id, Book bookDetails) {
+    public Book updateBook(Long id, BookUpdateDto book) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
-            Book book = optionalBook.get();
-            book.setTitle(bookDetails.getTitle());
-            book.setAuthor(bookDetails.getAuthor());
-            book.setPublishYear(bookDetails.getPublishYear());
-            return bookRepository.save(book);
+            Book updatedbook = optionalBook.get();
+            updatedbook.setTitle(book.getTitle());
+            updatedbook.setAuthor(book.getAuthor());
+            updatedbook.setPublishYear(book.getPublishYear());
+            return bookRepository.save(updatedbook);
         }
         return null;
     }

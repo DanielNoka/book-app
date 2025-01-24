@@ -1,5 +1,7 @@
 package org.springdemo.springproject.controller;
 
+import org.springdemo.springproject.dto.BookCreateDto;
+import org.springdemo.springproject.dto.BookUpdateDto;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +27,12 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> saveBook(@RequestBody Book book) {
+    public ResponseEntity<Book> saveBook(@RequestBody BookCreateDto book) {
         return new ResponseEntity<>(bookService.createBook(book), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookUpdateDto book) {
         return new ResponseEntity<>(bookService.updateBook(id, book), HttpStatus.OK);
     }
 
