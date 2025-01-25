@@ -3,6 +3,7 @@ package org.springdemo.springproject.controller;
 import org.springdemo.springproject.dto.BookCreateDto;
 import org.springdemo.springproject.dto.BookUpdateDto;
 import org.springdemo.springproject.entity.Book;
+import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,15 @@ public class BookController {
     BookService bookService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Book>> getBook(@PathVariable Long id) {
-        return new ResponseEntity<>(bookService.getById(id), HttpStatus.OK);
+    public ResponseEntity<?> getBookById(@PathVariable Long id) {
+        try {
+            Book book = bookService.getById(id);
+            return new ResponseEntity<>(book, HttpStatus.OK);
+        } catch (BookNotFoundException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
+
 
     @PostMapping
     public ResponseEntity<Book> saveBook(@RequestBody BookCreateDto book) {

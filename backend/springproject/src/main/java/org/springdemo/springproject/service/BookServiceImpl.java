@@ -3,6 +3,7 @@ package org.springdemo.springproject.service;
 import org.springdemo.springproject.dto.BookCreateDto;
 import org.springdemo.springproject.dto.BookUpdateDto;
 import org.springdemo.springproject.entity.Book;
+import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,10 @@ public class BookServiceImpl implements  BookService {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getById(Long id) {
-        return bookRepository.findById(id);
+    public Book getById(Long id) {
+
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     public Book createBook(BookCreateDto book) {
@@ -47,6 +50,7 @@ public class BookServiceImpl implements  BookService {
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
 
 
 }

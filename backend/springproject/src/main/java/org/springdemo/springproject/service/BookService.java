@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface BookService {
 
     List<Book> getAll();
-    Optional<Book> getById(Long id);
+    Book getById(Long id);
     Book createBook(BookCreateDto book);
     Book updateBook(Long id, BookUpdateDto book);
     void deleteBook(Long id);
