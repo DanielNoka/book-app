@@ -3,9 +3,8 @@ package org.springdemo.springproject.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
+
 
 
 @Getter
