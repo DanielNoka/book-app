@@ -27,32 +27,38 @@ public class BookController {
     public ApiResponse<?> getBookById(@PathVariable Long id) {
         try {
             Book book = bookService.getById(id);
-            return new ApiResponse<>(book, HttpStatus.OK);
+            return new ApiResponse<>(book, "Book founded" , HttpStatus.OK);
         } catch (BookNotFoundException ex) {
-            return new ApiResponse<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+            return new ApiResponse<>(null ,ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
 
     @PostMapping
     public ApiResponse<Book> saveBook(@RequestBody BookCreateDto book) {
-        return new ApiResponse<>(bookService.createBook(book), HttpStatus.CREATED);
+        Book createdBook = bookService.createBook(book);
+        return new ApiResponse<>(createdBook, "Book created", HttpStatus.CREATED);
+
     }
 
     @PutMapping("/{id}")
     public ApiResponse<Book> updateBook(@PathVariable Long id, @RequestBody BookUpdateDto book) {
-        return new ApiResponse<>(bookService.updateBook(id, book), HttpStatus.OK);
+        Book updatedBook = bookService.updateBook(id, book);
+        return new ApiResponse<>(updatedBook, "Book updated", HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<HttpStatus> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
-        return new ApiResponse<>(HttpStatus.NO_CONTENT);
+        return new ApiResponse<>(null, "Book deleted", HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/all")
     public ApiResponse<List<Book>> getAllBooks() {
-        return new ApiResponse<>(bookService.getAll(), HttpStatus.OK);
+        List<Book> books = bookService.getAll();
+        return new ApiResponse<>(books, "List of books", HttpStatus.OK);
+
     }
 
 
