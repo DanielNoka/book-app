@@ -6,11 +6,11 @@ import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.service.BookService;
 import org.springdemo.springproject.util.ApiResponse;
+import org.springdemo.springproject.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +27,9 @@ public class BookController {
     public ApiResponse<?> getBookById(@PathVariable Long id) {
         try {
             Book book = bookService.getById(id);
-            return ApiResponse.map(book, "Book founded", HttpStatus.OK);
+            return ApiResponse.map(book, Constants.successStatus, HttpStatus.OK);
         } catch (BookNotFoundException ex) {
-            return ApiResponse.map(null, ex.getMessage(), HttpStatus.NOT_FOUND);
+            return ApiResponse.map(null, Constants.failStatus, HttpStatus.NOT_FOUND);
         }
     }
 
