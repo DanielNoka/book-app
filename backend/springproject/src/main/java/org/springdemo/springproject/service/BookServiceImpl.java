@@ -24,8 +24,9 @@ public class BookServiceImpl implements  BookService {
     public Book getById(Long id) {
 
         return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
     }
+
 
     public Book createBook(BookCreateDto book) {
         Book newbook = new Book();

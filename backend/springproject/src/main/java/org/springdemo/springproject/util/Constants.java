@@ -2,6 +2,6 @@ package org.springdemo.springproject.util;
 
 public class Constants {
 
-    public static  final String successStatus = "OK";
-    public static  final String failStatus = "FAIL";
+    public static  final String OK = "OK";
+    public static  final String FAIL = "FAIL";
 }

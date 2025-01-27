@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springdemo.springproject.util.Constants.FAIL;
+import static org.springdemo.springproject.util.Constants.OK;
+
 
 //@CrossOrigin(origins = "http://localhost:3000") //lejon thirrjet nga react
 @RestController
@@ -25,12 +28,8 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ApiResponse<?> getBookById(@PathVariable Long id) {
-        try {
-            Book book = bookService.getById(id);
-            return ApiResponse.map(book, Constants.successStatus, HttpStatus.OK);
-        } catch (BookNotFoundException ex) {
-            return ApiResponse.map(null, Constants.failStatus, HttpStatus.NOT_FOUND);
-        }
+        Book book = bookService.getById(id);
+        return ApiResponse.map(book, OK, HttpStatus.OK);
     }
 
 
