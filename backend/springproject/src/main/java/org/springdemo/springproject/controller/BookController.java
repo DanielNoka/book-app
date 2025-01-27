@@ -5,6 +5,7 @@ import org.springdemo.springproject.dto.BookUpdateDto;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.service.BookService;
+import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,35 +24,35 @@ public class BookController {
     BookService bookService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable Long id) {
+    public ApiResponse<?> getBookById(@PathVariable Long id) {
         try {
             Book book = bookService.getById(id);
-            return new ResponseEntity<>(book, HttpStatus.OK);
+            return new ApiResponse<>(book, HttpStatus.OK);
         } catch (BookNotFoundException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+            return new ApiResponse<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
 
     @PostMapping
-    public ResponseEntity<Book> saveBook(@RequestBody BookCreateDto book) {
-        return new ResponseEntity<>(bookService.createBook(book), HttpStatus.CREATED);
+    public ApiResponse<Book> saveBook(@RequestBody BookCreateDto book) {
+        return new ApiResponse<>(bookService.createBook(book), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookUpdateDto book) {
-        return new ResponseEntity<>(bookService.updateBook(id, book), HttpStatus.OK);
+    public ApiResponse<Book> updateBook(@PathVariable Long id, @RequestBody BookUpdateDto book) {
+        return new ApiResponse<>(bookService.updateBook(id, book), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteBook(@PathVariable Long id) {
+    public ApiResponse<HttpStatus> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ApiResponse<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        return new ResponseEntity<>(bookService.getAll(), HttpStatus.OK);
+    public ApiResponse<List<Book>> getAllBooks() {
+        return new ApiResponse<>(bookService.getAll(), HttpStatus.OK);
     }
 
 
