@@ -27,7 +27,7 @@ public class BookController {
     BookService bookService;
 
     @GetMapping("/{id}")
-    public ApiResponse<?> getBookById(@PathVariable Long id) {
+    public ApiResponse<Book> getBookById(@PathVariable Long id) {
         Book book = bookService.getById(id);
         return ApiResponse.map(book, OK, HttpStatus.OK);
     }
@@ -49,6 +49,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<HttpStatus> deleteBook(@PathVariable Long id) {
+        Book book = bookService.getById(id); //used to return a exception if the book is not in database
         bookService.deleteBook(id);
         return  ApiResponse.map(null, "Book deleted", HttpStatus.NO_CONTENT);
     }

@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ApiResponse<T> {
-    private T data; // Returned Data
-    private String message; //  Message for succes or failture
-    private HttpStatus status; //  HTTP status
+    private final T data; // Returned Data
+    private final String message; //  Message for succes or failture
+    private final HttpStatus status; //  HTTP status
     private LocalDateTime timestamp;
 
     public ApiResponse(T data, String message, HttpStatus status) {
