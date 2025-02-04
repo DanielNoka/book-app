@@ -1,7 +1,7 @@
 package org.springdemo.springproject.exception;
 
 import lombok.AllArgsConstructor;
-import org.springdemo.springproject.service.LogEntryService;
+import org.springdemo.springproject.service.LogExceptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 
-    private final LogEntryService logEntryService;
+    private final LogExceptionService logExceptionService;
 
 
  //  Handle specific exception (BookNotFoundException)
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
    //Errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGlobalException(Exception ex, WebRequest request) {
-       logEntryService.saveErrorLog(ex.getMessage(), "GlobalExceptionHandler");
+       logExceptionService.saveErrorLog(ex.getMessage(), "GlobalExceptionHandler");
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "log_entries")
-public class LogEntry {
+public class LogException {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class LogEntry {
     @Column(name = "timestamp")
     private LocalDateTime time;
 
-    public LogEntry(String errorMessage, String methodName) {
+    public LogException(String errorMessage, String methodName) {
         this.errorMessage = errorMessage;
         this.methodName = methodName;
         this.time = LocalDateTime.now();

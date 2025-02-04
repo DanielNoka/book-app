@@ -4,7 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springdemo.springproject.service.LogEntryService;
+import org.springdemo.springproject.service.LogExceptionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ErrorLoggingAspect {
 
-    private final LogEntryService logEntryService;
+    private final LogExceptionService logExceptionService;
 
     @Around("execution(* org.springdemo.springproject.service.*.*(..))") // Capture all service methods
     public Object logError(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -21,7 +21,7 @@ public class ErrorLoggingAspect {
             return joinPoint.proceed();
         } catch (Exception e) {
             String methodName = joinPoint.getSignature().getName();
-            logEntryService.saveErrorLog(e.getMessage(), methodName);
+            logExceptionService.saveErrorLog(e.getMessage(), methodName);
             throw e; // Rethrow so the app doesn't ignore the error
         }
     }
