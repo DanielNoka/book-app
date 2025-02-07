@@ -28,6 +28,7 @@ public class BookController {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ApiResponse<Book> saveBook(@RequestBody @Valid BookDto book) {
         Book createdBook = bookService.createBook(book);

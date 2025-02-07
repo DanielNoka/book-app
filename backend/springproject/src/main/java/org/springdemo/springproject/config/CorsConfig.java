@@ -14,9 +14,9 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Lejon te gjitha endpointet
-                        .allowedOrigins("http://localhost:3000") // Lejon  kerkesast vetem nga kjo porte
-                        .allowedMethods("GET", "POST", "PUT", "DELETE"); // Metodat qe lejohen
+                registry.addMapping("/**") // Allow all endpoints to be accessed
+                        .allowedOrigins("http://localhost:3000") // From this port
+                        .allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
     }
