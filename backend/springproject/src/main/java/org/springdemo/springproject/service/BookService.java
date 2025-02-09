@@ -1,16 +1,18 @@
 package org.springdemo.springproject.service;
 
-import org.springdemo.springproject.dto.BookDto;
+import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.Book;
 
 import java.util.List;
 
 public interface BookService {
 
-    List<Book> getAll();
-    Book getById(Long id);
-    Book createBook(BookDto book);
-    Book updateBook(Long id, BookDto book);
+    List<BookDTO> getAll();
+    BookDTO getById(Long id);
+    BookDTO createBook(BookDTO book);
+    BookDTO updateBook(Long id, BookDTO book);
     void deleteBook(Long id);
 
+    BookDTO addAuthorToBook(Long bookId, Long authorId);
+    BookDTO removeAuthorFromBook(Long authorId, Long bookId);
 }
