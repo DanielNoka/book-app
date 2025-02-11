@@ -1,15 +1,10 @@
 package org.springdemo.springproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +34,6 @@ public class Author {
     private String description;
 
 
-    @ManyToMany(mappedBy = "authors")
-    private Set<Book> books = new HashSet<>();
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 }

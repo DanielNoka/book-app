@@ -1,8 +1,10 @@
 package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.Book;
+import org.springdemo.springproject.service.BookAuthorService;
 import org.springdemo.springproject.service.BookService;
 import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,21 @@ import java.util.List;
 import static org.springdemo.springproject.util.Constants.OK;
 
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/book")
 public class BookController {
 
-    @Autowired
-    BookService bookService;
 
+    BookService bookService;
+    BookAuthorService bookAuthorService;
+
+    //Adding author to a Book
+    @PostMapping("/{bookId}/authors/{authorId}")
+    public ApiResponse<HttpStatus> addAuthorToBook(@PathVariable Long bookId, @PathVariable Long authorId) {
+        bookAuthorService.addAuthorToBook(bookId, authorId);
+        return ApiResponse.map(null,"Author adedd to book",HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ApiResponse<BookDTO> getBookById(@PathVariable Long id) {
@@ -55,18 +65,5 @@ public class BookController {
         return  ApiResponse.map(books, "List of books", HttpStatus.OK);
     }
 
-    //Adding author to a Book
-    @PostMapping("/{bookId}/authors/{authorId}")
-    public ApiResponse<BookDTO> addAuthorToBook(@PathVariable Long bookId, @PathVariable Long authorId) {
-        BookDTO updatedBook = bookService.addAuthorToBook(bookId, authorId);
-        return ApiResponse.map(updatedBook,OK,HttpStatus.OK);
-    }
-
-    // Remove author from a book
-    @DeleteMapping("/{bookId}/author/{authorId}")
-    public ApiResponse<BookDTO> removeAuthorFromBook(@PathVariable Long bookId, @PathVariable Long authorId) {
-        BookDTO updatedBook = bookService.removeAuthorFromBook(bookId, authorId);
-        return ApiResponse.map(updatedBook, "Author with id :"+authorId+ " is removed from this book", HttpStatus.OK);
-    }
 
 }

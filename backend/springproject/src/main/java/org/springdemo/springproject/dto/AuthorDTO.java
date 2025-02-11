@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
-import java.util.Set;
+
 
 @Getter
 @Setter
@@ -19,10 +18,6 @@ public class AuthorDTO {
     private String email;
     private String nationality;
     private String description;
-
-    private List<Long> booksIds;
-
-
-
+    private List<Long> bookIds;
 
 }

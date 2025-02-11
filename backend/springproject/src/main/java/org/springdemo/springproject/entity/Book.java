@@ -1,9 +1,6 @@
 package org.springdemo.springproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -35,13 +32,7 @@ public class Book {
     private LocalDate publishYear;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "book_author",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private Set<Author> authors = new HashSet<>();
-
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 
 }

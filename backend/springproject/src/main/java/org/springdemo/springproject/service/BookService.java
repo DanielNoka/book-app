@@ -1,5 +1,6 @@
 package org.springdemo.springproject.service;
 
+
 import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.Book;
 
@@ -13,6 +14,5 @@ public interface BookService {
     BookDTO updateBook(Long id, BookDTO book);
     void deleteBook(Long id);
 
-    BookDTO addAuthorToBook(Long bookId, Long authorId);
-    BookDTO removeAuthorFromBook(Long authorId, Long bookId);
+
 }

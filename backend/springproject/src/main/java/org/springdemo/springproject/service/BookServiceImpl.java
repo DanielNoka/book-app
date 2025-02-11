@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.Author;
+import org.springdemo.springproject.entity.BookAuthor;
 import org.springdemo.springproject.exception.AuthorNotFoundException;
 import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.repository.AuthorRepository;
+import org.springdemo.springproject.repository.BookAuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +20,13 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Transactional // Ensures atomicity for DB operations
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final BookAuthorRepository bookAuthorRepository;
 
 
-    //
     @Override
     public List<BookDTO> getAll() {
         return bookRepository.findAll().stream()
@@ -70,41 +71,18 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    @Override
-    public BookDTO addAuthorToBook(Long bookId, Long authorId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("Book with id : "+bookId+" not found"));
 
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new AuthorNotFoundException("Author with id : "+authorId+" not found"));
-
-        book.getAuthors().add(author);
-        Book updatedBook = bookRepository.save(book);
-
-        return convertToDTO(updatedBook);
-    }
-
-    @Override
-    public BookDTO removeAuthorFromBook(Long bookId, Long authorId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("Book with id : "+bookId+" not found"));
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() ->new AuthorNotFoundException("Author with id : "+authorId+" not found"));
-
-        book.getAuthors().remove(author);
-        Book updatedBook = bookRepository.save(book);
-        return convertToDTO(book);
-    }
-
-    // Helper method to convert Book entity to BookDTO
     private BookDTO convertToDTO(Book book) {
         return new BookDTO(
                 book.getId(),
                 book.getTitle(),
                 book.getPublishYear(),
-                book.getAuthors() != null
-                        ? book.getAuthors().stream().map(Author::getId).collect(Collectors.toList())
+                book.getBookAuthors() != null
+                        ? book.getBookAuthors().stream().map(bookAuthor -> bookAuthor.getAuthor().getId()).collect(Collectors.toList())
                         : new ArrayList<>() // Handle null case
         );
     }
+
+
+
 }

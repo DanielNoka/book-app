@@ -35,7 +35,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDTO getById(Long id) {
         Author author = authorRepository.findById(id)
-                 .orElseThrow(() -> new AuthorNotFoundException("Author with ID " + id + " not found"));
+                .orElseThrow(() -> new AuthorNotFoundException("Author with ID " + id + " not found"));
         return convertToDTO(author);
     }
 
@@ -55,7 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDTO updateAuthor(Long id, AuthorDTO authorDto) {
         Author author = authorRepository.findById(id)
-                        .orElseThrow(() -> new AuthorNotFoundException("Author with ID " + id + " not found"));
+                .orElseThrow(() -> new AuthorNotFoundException("Author with ID " + id + " not found"));
 
         author.setName(authorDto.getName());
         author.setEmail(authorDto.getEmail());
@@ -85,8 +85,8 @@ public class AuthorServiceImpl implements AuthorService {
                 author.getEmail(),
                 author.getNationality(),
                 author.getDescription(),
-                author.getBooks() != null
-                        ? author.getBooks().stream().map(Book::getId).collect(Collectors.toList())
+                author.getBookAuthors() != null
+                        ? author.getBookAuthors().stream().map(bookAuthor -> bookAuthor.getBook().getId()).collect(Collectors.toList())
                         : new ArrayList<>() // Handle null case
         );
     }
