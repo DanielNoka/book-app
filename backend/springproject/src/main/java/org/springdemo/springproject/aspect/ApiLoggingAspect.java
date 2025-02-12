@@ -24,7 +24,7 @@ public class ApiLoggingAspect {
         String responseStatus;
         String logType = "INFO";
 
-        try {
+
             Object result = joinPoint.proceed();
 
             if (result instanceof ApiResponse<?> apiResponse) {
@@ -33,22 +33,34 @@ public class ApiLoggingAspect {
                 responseStatus = "UNKNOWN";
             }
 
-            logRequest(responseStatus, startTime, logType, null);
+            // logRequest(responseStatus, startTime, logType, null);
+            logApiService.saveLog(
+                    request.getMethod(),
+                    request.getRequestURI(),
+                    responseStatus,
+                    System.currentTimeMillis() - startTime,
+                    logType,
+                    null);
+
+
             return result;
-        } catch (Exception e) {
-            throw e; // Rethrow the exception
         }
     }
 
+//        } catch (Exception e) {
+//            throw e; // Rethrow the exception
+//        }
+//    }
 
-    private void logRequest(String status, long startTime, String logType,String message) {
-        logApiService.saveLog(
-                request.getMethod(),
-                request.getRequestURI(),
-                status,
-                System.currentTimeMillis() - startTime,
-                logType,
-                message
-        );
-    }
-}
+
+//    private void logRequest(String status, long startTime, String logType,String message) {
+//        logApiService.saveLog(
+//                request.getMethod(),
+//                request.getRequestURI(),
+//                status,
+//                System.currentTimeMillis() - startTime,
+//                logType,
+//                message
+//        );
+//    }
+

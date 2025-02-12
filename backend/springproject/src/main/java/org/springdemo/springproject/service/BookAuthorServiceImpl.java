@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.BookAuthor;
+import org.springdemo.springproject.exception.AuthorAlreadyAddedException;
 import org.springdemo.springproject.exception.AuthorNotFoundException;
 import org.springdemo.springproject.exception.BookNotFoundException;
 import org.springdemo.springproject.repository.AuthorRepository;
@@ -30,12 +31,10 @@ public class BookAuthorServiceImpl implements BookAuthorService {
         Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException("Author with id : "+authorId+" not found"));
 
-        Optional<BookAuthor> existingBookAuthor = book.getBookAuthors().stream()
-                .filter(ba -> ba.getAuthor().getId().equals(authorId))
-                .findFirst();
 
-        if (existingBookAuthor.isPresent()) {
-            throw new IllegalArgumentException("Author with id " + authorId + " is already added to this book.");
+
+        if (bookAuthorRepository.existsByBookIdAndAuthorId(bookId,authorId)) {
+            throw new AuthorAlreadyAddedException("Author with id " + authorId + " is already added to this book..");
         }
 
         BookAuthor bookAuthor = new BookAuthor(book, author);

@@ -1,5 +1,6 @@
 package org.springdemo.springproject.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 public class AuthorDTO {
 
     private Long id;
+    @NotEmpty(message = "name cant be empty")
     private String name;
     private String email;
     private String nationality;

@@ -1,80 +1,85 @@
 package org.springdemo.springproject.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.service.LogApiService;
+import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-@ControllerAdvice
+
 @AllArgsConstructor
 @Slf4j
+@ControllerAdvice
+@ResponseBody
 public class GlobalExceptionHandler {
 
     private final LogApiService logApiService;
-    private final HttpServletRequest request;
 
-    // Handles validation errors
+
+    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
+    public ApiResponse<String> handleNotFoundException(RuntimeException ex, WebRequest webRequest, HttpServletRequest request) {
+        logAndSaveError(request, webRequest, HttpStatus.NOT_FOUND, ex);
+        return ApiResponse.map(null, ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-
+    public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletResponse response) {
         Map<String, String> fieldErrors = new HashMap<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            fieldErrors.put(error.getField(), error.getDefaultMessage());
-        }
-        response.put("message", "Validation failed");
-        response.put("errors", fieldErrors);
-        response.put("path", request.getDescription(false).replace("uri=", ""));
+        ex.getBindingResult().getFieldErrors().forEach(error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
 
         log.error("Validation Exception: {}", ex.getMessage());
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        return ApiResponse.map(fieldErrors, "Validation failed", HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles all unexpected exceptions globally
+     */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception ex, WebRequest request) {
-        int statusCode = getStatusFromException(ex);
+    public ApiResponse<Map<String, Object>> handleException(Exception ex, WebRequest webRequest, HttpServletRequest request, HttpServletResponse response) {
+        HttpStatus status = getStatusFromException(ex);
+        logAndSaveError(request, webRequest, status, ex);
 
-        // Log  errors here not in aspect class
+        response.setStatus(status.value());
+        return ApiResponse.map(null, ex.getMessage(), status);
+    }
+
+    /**
+     * Determines the HTTP status from the exception (fallback to 500 if unknown)
+     */
+    private HttpStatus getStatusFromException(Exception ex) {
+        if (ex.getClass().isAnnotationPresent(org.springframework.web.bind.annotation.ResponseStatus.class)) {
+            return ex.getClass().getAnnotation(org.springframework.web.bind.annotation.ResponseStatus.class).value();
+        }
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * Logs and saves error details
+     */
+    private void logAndSaveError(HttpServletRequest request, WebRequest webRequest, HttpStatus status, Exception ex) {
+        String path = webRequest.getDescription(false).replace("uri=", "");
+        log.error("Exception caught: {} at {}", ex.getMessage(), path);
+
         logApiService.saveLog(
-                this.request.getMethod(),
-                request.getDescription(false).replace("uri=", ""),
-                String.valueOf(statusCode),
+                request.getMethod(),
+                path,
+                String.valueOf(status.value()),
                 0L,
                 "ERROR",
                 ex.getMessage()
         );
-
-        return buildErrorResponse(ex.getMessage(), HttpStatus.valueOf(statusCode), request);
-    }
-
-    private int getStatusFromException(Exception ex) {
-        ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
-        return (responseStatus != null) ? responseStatus.value().value() : HttpStatus.INTERNAL_SERVER_ERROR.value();
-    }
-
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, HttpStatus status, WebRequest request) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", status.value());
-        response.put("error", status.getReasonPhrase());
-        response.put("message", message);
-        response.put("path", request.getDescription(false).replace("uri=", ""));
-        return new ResponseEntity<>(response, status);
     }
 }
