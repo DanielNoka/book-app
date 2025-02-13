@@ -7,15 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.service.LogApiService;
 import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-
 import java.util.HashMap;
 import java.util.Map;
+import static org.springdemo.springproject.util.Constants.FAIL;
 
 @AllArgsConstructor
 @Slf4j
@@ -40,19 +39,17 @@ public class GlobalExceptionHandler {
 
         log.error("Validation Exception: {}", ex.getMessage());
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        return ApiResponse.map(fieldErrors, "Validation failed", HttpStatus.BAD_REQUEST);
+        return ApiResponse.map(fieldErrors, FAIL, HttpStatus.BAD_REQUEST);
     }
 
     /**
      * Handles all unexpected exceptions globally
      */
     @ExceptionHandler(Exception.class)
-    public ApiResponse<Map<String, Object>> handleException(Exception ex, WebRequest webRequest, HttpServletRequest request, HttpServletResponse response) {
+    public ApiResponse<Map<String, Object>> handleException(Exception ex, WebRequest webRequest, HttpServletRequest request) {
         HttpStatus status = getStatusFromException(ex);
         logAndSaveError(request, webRequest, status, ex);
 
-        response.setStatus(status.value());
         return ApiResponse.map(null, ex.getMessage(), status);
     }
 
@@ -71,6 +68,7 @@ public class GlobalExceptionHandler {
      */
     private void logAndSaveError(HttpServletRequest request, WebRequest webRequest, HttpStatus status, Exception ex) {
         String path = webRequest.getDescription(false).replace("uri=", "");
+
         log.error("Exception caught: {} at {}", ex.getMessage(), path);
 
         logApiService.saveLog(

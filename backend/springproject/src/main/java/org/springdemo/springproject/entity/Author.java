@@ -36,4 +36,6 @@ public class Author {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private Set<BookAuthor> bookAuthors = new HashSet<>();
+
+
 }

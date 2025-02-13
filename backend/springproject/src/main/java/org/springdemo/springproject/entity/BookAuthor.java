@@ -32,4 +32,3 @@ public class BookAuthor {
         this.author = author;
     }
 }
-

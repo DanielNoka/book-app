@@ -3,17 +3,18 @@ package org.springdemo.springproject.service;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.dto.BookDTO;
+import org.springdemo.springproject.dto.CreateBookDTO;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.BookAuthor;
 import org.springdemo.springproject.exception.AuthorNotFoundException;
 import org.springdemo.springproject.exception.BookNotFoundException;
+import org.springdemo.springproject.mapper.BookMapper;
 import org.springdemo.springproject.repository.AuthorRepository;
 import org.springdemo.springproject.repository.BookAuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +26,13 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final BookAuthorRepository bookAuthorRepository;
+    private final BookMapper bookMapper;
 
 
     @Override
     public List<BookDTO> getAll() {
         return bookRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(bookMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -38,29 +40,28 @@ public class BookServiceImpl implements BookService {
     public BookDTO getById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
-        return convertToDTO(book);
+        return bookMapper.toDTO(book);
     }
 
     @Override
-    public BookDTO createBook(BookDTO bookDto) {
-        Book newBook = new Book();
-        newBook.setTitle(bookDto.getTitle());
-        newBook.setPublishYear(bookDto.getPublishYear());
+    public BookDTO createBook(CreateBookDTO createBookDTO) {
 
+        Book newBook = bookMapper.toEntity(createBookDTO);
         Book savedBook = bookRepository.save(newBook);
-        return convertToDTO(savedBook);
+
+        return bookMapper.toDTO(savedBook);
     }
 
     @Override
-    public BookDTO updateBook(Long id, BookDTO bookDto) {
+    public BookDTO updateBook(Long id, CreateBookDTO createBookDTO) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found, cannot update"));
 
-        existingBook.setTitle(bookDto.getTitle());
-        existingBook.setPublishYear(bookDto.getPublishYear());
+        existingBook.setTitle(createBookDTO.getTitle());
+        existingBook.setPublishYear(createBookDTO.getPublishYear());
 
         Book updatedBook = bookRepository.save(existingBook);
-        return convertToDTO(updatedBook);
+        return bookMapper.toDTO(updatedBook);
     }
 
     @Override
@@ -70,19 +71,5 @@ public class BookServiceImpl implements BookService {
         }
         bookRepository.deleteById(id);
     }
-
-
-    private BookDTO convertToDTO(Book book) {
-        return new BookDTO(
-                book.getId(),
-                book.getTitle(),
-                book.getPublishYear(),
-                book.getBookAuthors() != null
-                        ? book.getBookAuthors().stream().map(bookAuthor -> bookAuthor.getAuthor().getId()).collect(Collectors.toList())
-                        : new ArrayList<>() // Handle null case
-        );
-    }
-
-
 
 }

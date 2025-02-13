@@ -2,15 +2,16 @@ package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
 import org.springdemo.springproject.dto.AuthorDTO;
+import org.springdemo.springproject.dto.CreateAuthorDTO;
 import org.springdemo.springproject.service.AuthorService;
 import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 import static org.springdemo.springproject.util.Constants.OK;
+import static org.springdemo.springproject.util.Constants.CREATED;
+import static org.springdemo.springproject.util.Constants.UPDATED;
 
 @RestController
 @RequestMapping("/author")
@@ -18,7 +19,6 @@ public class AuthorController {
 
     @Autowired
     private AuthorService authorService;
-
 
     @GetMapping("/{id}")
     public ApiResponse<AuthorDTO> getAuthorById(@PathVariable Long id) {
@@ -29,30 +29,27 @@ public class AuthorController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ApiResponse<AuthorDTO> saveAuthor(@RequestBody @Valid AuthorDTO authorDto) {
-        AuthorDTO newAuthor = authorService.createAuthor(authorDto);
-        return  ApiResponse.map(newAuthor, "Author created", HttpStatus.CREATED);
-
+    public ApiResponse<AuthorDTO> saveAuthor(@RequestBody @Valid CreateAuthorDTO createAuthorDTO) {
+        AuthorDTO newAuthor = authorService.createAuthor(createAuthorDTO);
+        return  ApiResponse.map(newAuthor, CREATED, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<AuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody @Valid AuthorDTO authorDto) {
-        AuthorDTO updatedAuthor = authorService.updateAuthor(id, authorDto);
-        return  ApiResponse.map(updatedAuthor, "Author updated", HttpStatus.OK);
-
+    public ApiResponse<AuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody @Valid CreateAuthorDTO createAuthorDTO) {
+        AuthorDTO updatedAuthor = authorService.updateAuthor(id, createAuthorDTO);
+        return  ApiResponse.map(updatedAuthor, UPDATED, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<HttpStatus> deleteAuthor(@PathVariable Long id) {
         authorService.deleteAuthor(id);
-        return  ApiResponse.map(null, "Author deleted", HttpStatus.NO_CONTENT);
+        return  ApiResponse.map(null, OK, HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/all")
     public ApiResponse<List<AuthorDTO>> getAllAuthors() {
         List<AuthorDTO> authors = authorService.getAll();
-        return  ApiResponse.map(authors, "List of authors", HttpStatus.OK);
-
+        return  ApiResponse.map(authors, OK, HttpStatus.OK);
     }
 
 }

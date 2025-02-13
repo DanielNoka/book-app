@@ -33,7 +33,6 @@ public class ApiLoggingAspect {
                 responseStatus = "UNKNOWN";
             }
 
-            // logRequest(responseStatus, startTime, logType, null);
             logApiService.saveLog(
                     request.getMethod(),
                     request.getRequestURI(),
@@ -47,20 +46,4 @@ public class ApiLoggingAspect {
         }
     }
 
-//        } catch (Exception e) {
-//            throw e; // Rethrow the exception
-//        }
-//    }
-
-
-//    private void logRequest(String status, long startTime, String logType,String message) {
-//        logApiService.saveLog(
-//                request.getMethod(),
-//                request.getRequestURI(),
-//                status,
-//                System.currentTimeMillis() - startTime,
-//                logType,
-//                message
-//        );
-//    }
 
