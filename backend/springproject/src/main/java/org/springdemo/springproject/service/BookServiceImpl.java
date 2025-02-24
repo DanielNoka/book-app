@@ -1,21 +1,15 @@
 package org.springdemo.springproject.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springdemo.springproject.dto.BookDTO;
+import org.modelmapper.ModelMapper;
 import org.springdemo.springproject.dto.CreateBookDTO;
-import org.springdemo.springproject.entity.Book;
-import org.springdemo.springproject.entity.Author;
-import org.springdemo.springproject.entity.BookAuthor;
-import org.springdemo.springproject.exception.AuthorNotFoundException;
-import org.springdemo.springproject.exception.BookNotFoundException;
-import org.springdemo.springproject.mapper.BookMapper;
+import org.springdemo.springproject.entity.*;
+import org.springdemo.springproject.exception.EntityNotFoundException;
 import org.springdemo.springproject.repository.AuthorRepository;
-import org.springdemo.springproject.repository.BookAuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
+import org.springdemo.springproject.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,50 +18,65 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final BookAuthorRepository bookAuthorRepository;
-    private final BookMapper bookMapper;
+    private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
+
+    public List<Author> getAuthorsByBookId(Long bookId) {
+        List<Author> authors = bookRepository.findAuthorsByBookId(bookId);
+
+        if (authors.isEmpty()) {
+            if (!bookRepository.existsById(bookId)) {
+                throw new EntityNotFoundException("Book with ID: " + bookId + " does not exist");
+            }
+            throw new EntityNotFoundException("Book with ID: " + bookId + " exists but has no authors");
+        }
+        return authors;
+    }
 
     @Override
-    public List<BookDTO> getAll() {
-        return bookRepository.findAll().stream()
-                .map(bookMapper::toDTO)
+    public List<Book> getBooksByCategoryId(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category with ID " + categoryId + " not found"));
+
+        return category.getBookCategories().stream()
+                .map(BookCategory::getBook)
                 .collect(Collectors.toList());
     }
 
+
     @Override
-    public BookDTO getById(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
-        return bookMapper.toDTO(book);
+    public List<Book> getAll() {
+        return bookRepository.findAll();
     }
 
     @Override
-    public BookDTO createBook(CreateBookDTO createBookDTO) {
-
-        Book newBook = bookMapper.toEntity(createBookDTO);
-        Book savedBook = bookRepository.save(newBook);
-
-        return bookMapper.toDTO(savedBook);
+    public Book getById(Long id) {
+        return  bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " not found"));
     }
 
     @Override
-    public BookDTO updateBook(Long id, CreateBookDTO createBookDTO) {
+    public Book createBook(CreateBookDTO createBookDTO) {
+
+        Book newBook = modelMapper.map(createBookDTO, Book.class);
+
+        return  bookRepository.save(newBook);
+    }
+
+    @Override
+    public Book updateBook(Long id, CreateBookDTO createBookDTO) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found, cannot update"));
+                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " not found, cannot update"));
 
-        existingBook.setTitle(createBookDTO.getTitle());
-        existingBook.setPublishYear(createBookDTO.getPublishYear());
+        modelMapper.map(createBookDTO, existingBook);
 
-        Book updatedBook = bookRepository.save(existingBook);
-        return bookMapper.toDTO(updatedBook);
+        return bookRepository.save(existingBook);
     }
 
-    @Override
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new BookNotFoundException("Book with ID " + id + " not found, cannot delete");
+            throw new EntityNotFoundException("Book with ID " + id + " not found");
         }
         bookRepository.deleteById(id);
     }

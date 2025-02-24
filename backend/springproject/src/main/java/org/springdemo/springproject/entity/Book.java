@@ -1,15 +1,11 @@
 package org.springdemo.springproject.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import lombok.*;
-
-
 
 @Getter
 @Setter
@@ -17,22 +13,21 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "Book")
-public class Book {
-    @Id //cdo entitet duhet te kete nje identifikues unik
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // autoincrement id
-    @Column(name = "Id")
-    private Long id;
+public class Book extends BaseEntity {
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-
-    // Përdor LocalDate dhe specifiko që duhet të ruhet si DATE
-    @Column(name = "publishYear", columnDefinition = "DATE")
+    @Column(name = "publish_year", columnDefinition = "DATE")
     private LocalDate publishYear;
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<BookCategory> bookCategories = new HashSet<>();
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
-    private Set<BookAuthor> bookAuthors = new HashSet<>();
+    @JsonIgnore
+    private Set<BookAuthor> bookAuthors = new TreeSet<>();
 
+    //todo: Set vs List vs HashNap [extends Collection<E>]
 }

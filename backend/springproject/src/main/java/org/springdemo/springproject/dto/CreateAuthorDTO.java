@@ -14,6 +14,9 @@ public class CreateAuthorDTO {
     @NotEmpty(message = "Name can't be empty")
     private String name;
 
+    @NotEmpty(message = "Name can't be empty")
+    private String surname;
+
     @Email(message = "Email should be valid")
     private String email;
 

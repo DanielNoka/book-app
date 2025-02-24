@@ -2,6 +2,11 @@ package org.springdemo.springproject.util;
 
 public class Constants {
 
+    // Private constructor to prevent instantiation
+    private Constants() {
+        throw new UnsupportedOperationException("Cannot instantiate this class");
+    }
+
     public static  final String OK = "OK";
     public static  final String FAIL = "FAIL";
     public static  final String CREATED = "CREATED";

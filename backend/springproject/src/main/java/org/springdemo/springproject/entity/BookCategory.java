@@ -11,24 +11,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "book_author")
-public class BookAuthor {
+@Table(name = "book_category")
+public class BookCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "book_id", nullable = false) // bookid ForeignKey from Book
+    @JoinColumn(name = "book_id", nullable = false) //todo: read about the comparison
     private Book book;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private Author author;
-
-    public BookAuthor(Book book, Author author) {
-        this.book = book;
-        this.author = author;
-    }
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
 }

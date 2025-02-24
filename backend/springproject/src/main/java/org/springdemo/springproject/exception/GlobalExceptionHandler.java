@@ -24,8 +24,7 @@ public class GlobalExceptionHandler {
 
     private final LogApiService logApiService;
 
-
-    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
+    @ExceptionHandler({EntityNotFoundException.class})
     public ApiResponse<String> handleNotFoundException(RuntimeException ex, WebRequest webRequest, HttpServletRequest request) {
         logAndSaveError(request, webRequest, HttpStatus.NOT_FOUND, ex);
         return ApiResponse.map(null, ex.getMessage(), HttpStatus.NOT_FOUND);
