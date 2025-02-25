@@ -1,11 +1,9 @@
 package org.springdemo.springproject.controller;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdemo.springproject.dto.CategoryDTO;
 import org.springdemo.springproject.entity.Book;
-import org.springdemo.springproject.entity.BookCategory;
 import org.springdemo.springproject.entity.Category;
 import org.springdemo.springproject.service.BookService;
 import org.springdemo.springproject.service.CategoryService;
@@ -29,6 +27,12 @@ public class CategoryController {
     public ApiResponse<List<Book>> getBooksByCategoryId(@PathVariable Long categoryId) {
         List<Book> books = bookService.getBooksByCategoryId(categoryId);
         return  ApiResponse.map(books,OK,HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<Category>> searchCategories(@RequestParam String name) {
+        List<Category> categories = categoryService.searchCategoriesByName(name);
+        return ApiResponse.map(categories,OK,HttpStatus.OK);
     }
 
     @GetMapping("/all")

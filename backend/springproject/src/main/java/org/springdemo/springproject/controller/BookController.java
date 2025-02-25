@@ -9,6 +9,10 @@ import org.springdemo.springproject.service.BookAuthorService;
 import org.springdemo.springproject.service.BookCategoryService;
 import org.springdemo.springproject.service.BookService;
 import org.springdemo.springproject.util.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -26,7 +30,7 @@ public class BookController {
     BookCategoryService bookCategoryService;
 
 
-    @PostMapping({"{bookId}/toCategory/{categoryId}"})
+    @PostMapping({"{bookId}/categories/{categoryId}"})
     public ApiResponse<HttpStatus> addBookToCategory(@PathVariable Long bookId, @PathVariable Long categoryId) {
         bookCategoryService.addBookToCategory(bookId, categoryId);
         return ApiResponse.map(null,OK,HttpStatus.OK);
@@ -39,7 +43,7 @@ public class BookController {
     }
 
     @GetMapping("/authors/{bookId}")
-    public ApiResponse<List<Author>> getBooksByAuthorId(@PathVariable Long bookId) {
+    public ApiResponse<List<Author>> getAuthordByBookId(@PathVariable Long bookId) {
         List<Author> books = bookService.getAuthorsByBookId(bookId);
         return ApiResponse.map(books,OK,HttpStatus.OK);
     }

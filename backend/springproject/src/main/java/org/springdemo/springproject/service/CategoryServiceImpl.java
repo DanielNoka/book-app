@@ -24,6 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> searchCategoriesByName(String categoryName) {
+        return categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+    }
+    @Override
     public Category getById(Long categoryId) {
 
         return categoryRepository.findById(categoryId)

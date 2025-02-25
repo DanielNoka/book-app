@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
-
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
 @Getter
@@ -18,6 +18,7 @@ public class Book extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @PastOrPresent(message = "Publish year must be in the past or today")
     @Column(name = "publish_year", columnDefinition = "DATE")
     private LocalDate publishYear;
 
@@ -27,7 +28,7 @@ public class Book extends BaseEntity {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<BookAuthor> bookAuthors = new TreeSet<>();
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 
     //todo: Set vs List vs HashNap [extends Collection<E>]
 }

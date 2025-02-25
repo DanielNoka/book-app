@@ -8,6 +8,8 @@ import org.springdemo.springproject.exception.EntityNotFoundException;
 import org.springdemo.springproject.repository.AuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springdemo.springproject.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class BookServiceImpl implements BookService {
+public
+
+class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
@@ -43,7 +47,6 @@ public class BookServiceImpl implements BookService {
                 .map(BookCategory::getBook)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public List<Book> getAll() {

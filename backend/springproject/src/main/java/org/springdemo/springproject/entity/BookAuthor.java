@@ -26,9 +26,5 @@ public class BookAuthor {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    public BookAuthor(Book book, Author author) {
-        this.book = book;
-        this.author = author;
-    }
 
 }
