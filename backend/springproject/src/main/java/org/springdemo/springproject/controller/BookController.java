@@ -18,7 +18,7 @@ import static org.springdemo.springproject.util.Constants.UPDATED;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
@@ -38,7 +38,7 @@ public class BookController {
     }
 
     @GetMapping("/authors/{bookId}")
-    public ApiResponse<List<Author>> getAuthordByBookId(@PathVariable Long bookId) {
+    public ApiResponse<List<Author>> getAuthorsByBookId(@PathVariable Long bookId) {
         List<Author> books = bookService.getAuthorsByBookId(bookId);
         return ApiResponse.map(books,OK,HttpStatus.OK);
     }
@@ -67,7 +67,7 @@ public class BookController {
         return  ApiResponse.map(null, OK, HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ApiResponse<List<Book>> getAllBooks() {
         List<Book> books = bookService.getAll();
         return  ApiResponse.map(books, OK, HttpStatus.OK);

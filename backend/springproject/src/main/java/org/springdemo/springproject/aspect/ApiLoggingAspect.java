@@ -42,7 +42,11 @@ public class ApiLoggingAspect {
    * obtain the HttpServletRequest in a thread-safe way
    */
     private HttpServletRequest getRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            throw new IllegalStateException("No HTTP request available for logging.");
+        }
+        return attributes.getRequest();
     }
 
     private String extractResponseStatus(Object result) {

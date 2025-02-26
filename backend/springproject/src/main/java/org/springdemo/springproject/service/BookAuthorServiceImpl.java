@@ -1,6 +1,7 @@
 package org.springdemo.springproject.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.BookAuthor;
@@ -12,6 +13,7 @@ import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookAuthorServiceImpl implements BookAuthorService {
@@ -24,6 +26,7 @@ public class BookAuthorServiceImpl implements BookAuthorService {
     @Transactional
     public void addAuthorToBook(Long bookId, Long authorId) {
 
+        log.info("Adding author with ID {} to Book with ID {}", authorId, bookId);
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book with id : "+bookId+" not found"));
 
@@ -38,6 +41,8 @@ public class BookAuthorServiceImpl implements BookAuthorService {
         bookAuthor.setBook(book);
         bookAuthor.setAuthor(author);
         bookAuthorRepository.save(bookAuthor);
+
+        log.info("Book with ID {} is added to author ID {}", bookId, authorId);
 
     }
 }

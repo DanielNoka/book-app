@@ -2,6 +2,7 @@ package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.dto.CategoryDTO;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.Category;
@@ -15,9 +16,10 @@ import static org.springdemo.springproject.util.Constants.OK;
 import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -30,15 +32,15 @@ public class CategoryController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Category>> searchCategories(@RequestParam String name) {
+    public ApiResponse<List<Category>> getCategoriesByName(@RequestParam String name) {
         List<Category> categories = categoryService.searchCategoriesByName(name);
         return ApiResponse.map(categories,OK,HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ApiResponse<List<Category>> getAll(){
-       List<Category> categories =  categoryService.getAll();
-       return ApiResponse.map(categories,OK,HttpStatus.OK);
+        List<Category> categories =  categoryService.getAll();
+        return ApiResponse.map(categories,OK,HttpStatus.OK);
     }
 
     @GetMapping("/{categoryId}")

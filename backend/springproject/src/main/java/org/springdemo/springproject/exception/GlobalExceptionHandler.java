@@ -21,25 +21,30 @@ public class GlobalExceptionHandler {
 
     private final LogApiService logApiService;
 
+    /**
+     * Handles entity not found exception
+     */
     @ExceptionHandler({EntityNotFoundException.class})
     public ApiResponse<String> handleNotFoundException(RuntimeException ex, WebRequest webRequest, HttpServletRequest request) {
         logAndSaveError(request, webRequest, HttpStatus.NOT_FOUND, ex);
         return ApiResponse.map(null, ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-
+    /**
+     * Handles validation errors (e.g., invalid input fields).
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
 
-        log.error("Validation Exception: {}", ex.getMessage());
+        log.warn("Validation Exception: {}", ex.getMessage());
 
         return ApiResponse.map(fieldErrors, FAIL, HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Handles all unexpected exceptions globally
+     * Handles all unexpected exceptions globally.
      */
     @ExceptionHandler(Exception.class)
     public ApiResponse<Map<String, Object>> handleException(Exception ex, WebRequest webRequest, HttpServletRequest request) {
@@ -65,7 +70,7 @@ public class GlobalExceptionHandler {
     private void logAndSaveError(HttpServletRequest request, WebRequest webRequest, HttpStatus status, Exception ex) {
         String path = webRequest.getDescription(false).replace("uri=", "");
 
-        log.error("Exception caught: {} at {}", ex.getMessage(), path);
+        log.error("Exception caught: {} at {} | Method: {} | Status: {}", ex.getMessage(), path, request.getMethod(), status.value(), ex);
 
         logApiService.saveLog(
                 request.getMethod(),

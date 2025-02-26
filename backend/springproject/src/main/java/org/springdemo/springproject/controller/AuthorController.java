@@ -2,6 +2,7 @@ package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.dto.CreateAuthorDTO;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
@@ -14,9 +15,10 @@ import static org.springdemo.springproject.util.Constants.OK;
 import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/author")
+@RequestMapping("/authors")
 public class AuthorController {
 
     private final AuthorService authorService;
@@ -51,7 +53,7 @@ public class AuthorController {
         return  ApiResponse.map(null, OK, HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ApiResponse<List<Author>> getAllAuthors() {
         List<Author> authors = authorService.getAll();
         return  ApiResponse.map(authors, OK, HttpStatus.OK);
