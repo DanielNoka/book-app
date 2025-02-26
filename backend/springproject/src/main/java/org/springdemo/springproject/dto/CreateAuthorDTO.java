@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 public class CreateAuthorDTO {
@@ -14,7 +13,7 @@ public class CreateAuthorDTO {
     @NotEmpty(message = "Name can't be empty")
     private String name;
 
-    @NotEmpty(message = "Name can't be empty")
+    @NotEmpty(message = "Surname can't be empty")
     private String surname;
 
     @Email(message = "Email should be valid")
@@ -23,8 +22,7 @@ public class CreateAuthorDTO {
     @NotEmpty(message = "Nationality cannot be empty")
     private String nationality;
 
-    @Size(max = 50, message = "Nationality should not exceed 50 characters")
+    @Size(max = 50, message = "Description should not exceed 50 characters")
     private String description;
-
 
 }

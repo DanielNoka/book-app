@@ -1,16 +1,13 @@
 package org.springdemo.springproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Getter
@@ -44,6 +41,6 @@ public class Author extends BaseEntity {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<BookAuthor> bookAuthors = new TreeSet<>(); //maintain insertion order
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 
 }

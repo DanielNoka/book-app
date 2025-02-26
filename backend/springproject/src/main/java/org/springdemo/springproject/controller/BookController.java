@@ -1,7 +1,7 @@
 package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.dto.CreateBookDTO;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
@@ -9,10 +9,6 @@ import org.springdemo.springproject.service.BookAuthorService;
 import org.springdemo.springproject.service.BookCategoryService;
 import org.springdemo.springproject.service.BookService;
 import org.springdemo.springproject.util.ApiResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -20,15 +16,14 @@ import static org.springdemo.springproject.util.Constants.OK;
 import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/book")
 public class BookController {
 
-    BookService bookService;
-    BookAuthorService bookAuthorService;
-    BookCategoryService bookCategoryService;
-
+    private final BookService bookService;
+    private final BookAuthorService bookAuthorService;
+    private final BookCategoryService bookCategoryService;
 
     @PostMapping({"{bookId}/categories/{categoryId}"})
     public ApiResponse<HttpStatus> addBookToCategory(@PathVariable Long bookId, @PathVariable Long categoryId) {

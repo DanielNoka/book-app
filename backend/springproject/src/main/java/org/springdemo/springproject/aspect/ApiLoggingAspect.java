@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springdemo.springproject.service.LogApiService;
 import org.springdemo.springproject.util.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Aspect
 @Component
@@ -16,34 +17,39 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ApiLoggingAspect {
 
     private final LogApiService logApiService;
-    private final HttpServletRequest request;
 
     @Around("execution(* org.springdemo.springproject.controller.*.*(..))") // Logs only controller methods
     public Object logApiCall(ProceedingJoinPoint joinPoint) throws Throwable {
+
         long startTime = System.currentTimeMillis();
-        String responseStatus;
+        HttpServletRequest request = getRequest();
         String logType = "INFO";
+        Object result = joinPoint.proceed();
+        String responseStatus = extractResponseStatus(result);
 
+        logApiService.saveLog(
+                request.getMethod(),
+                request.getRequestURI(),
+                responseStatus,
+                System.currentTimeMillis() - startTime,
+                logType,
+                null);
 
-            Object result = joinPoint.proceed();
-
-            if (result instanceof ApiResponse<?> apiResponse) {
-                responseStatus = apiResponse.getStatus().toString();
-            } else {
-                responseStatus = "UNKNOWN";
-            }
-
-            logApiService.saveLog(
-                    request.getMethod(),
-                    request.getRequestURI(),
-                    responseStatus,
-                    System.currentTimeMillis() - startTime,
-                    logType,
-                    null);
-
-
-            return result;
-        }
+        return result;
     }
 
+   /**
+   * obtain the HttpServletRequest in a thread-safe way
+   */
+    private HttpServletRequest getRequest() {
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    }
 
+    private String extractResponseStatus(Object result) {
+        if (result instanceof ApiResponse<?> apiResponse) {
+            return apiResponse.getStatus().toString();
+        }
+        return "UNKNOWN";
+    }
+
+}

@@ -1,7 +1,7 @@
 package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.dto.CreateAuthorDTO;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
@@ -15,11 +15,11 @@ import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/author")
 public class AuthorController {
 
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
     @GetMapping("/{authorId}/books")
     public ApiResponse<List<Book>> getBooksByAuthor(@PathVariable Long authorId) {

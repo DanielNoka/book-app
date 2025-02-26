@@ -1,6 +1,6 @@
 package org.springdemo.springproject.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.BookAuthor;
@@ -10,18 +10,18 @@ import org.springdemo.springproject.repository.AuthorRepository;
 import org.springdemo.springproject.repository.BookAuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookAuthorServiceImpl implements BookAuthorService {
 
     private final BookAuthorRepository bookAuthorRepository;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
-
     @Override
+    @Transactional
     public void addAuthorToBook(Long bookId, Long authorId) {
 
         Book book = bookRepository.findById(bookId)
@@ -38,10 +38,6 @@ public class BookAuthorServiceImpl implements BookAuthorService {
         bookAuthor.setBook(book);
         bookAuthor.setAuthor(author);
         bookAuthorRepository.save(bookAuthor);
-
-
-        //bookRepository.save(book);
-
 
     }
 }

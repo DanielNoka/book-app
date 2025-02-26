@@ -1,25 +1,22 @@
 package org.springdemo.springproject.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.service.LogApiService;
 import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 import static org.springdemo.springproject.util.Constants.FAIL;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
-@ControllerAdvice
-@ResponseBody
+@RestControllerAdvice // ControllerAdvice + ResponseBody(ensure JSON response)
 public class GlobalExceptionHandler {
 
     private final LogApiService logApiService;
@@ -32,7 +29,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletResponse response) {
+    public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
 

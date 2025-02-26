@@ -1,6 +1,6 @@
 package org.springdemo.springproject.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springdemo.springproject.dto.CreateAuthorDTO;
 import org.springdemo.springproject.entity.Author;
@@ -13,16 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional // Ensures atomicity for DB operations
 public class AuthorServiceImpl implements AuthorService {
 
-
-    private AuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
     private final ModelMapper modelMapper;
-
 
     @Override
     public List<Book> getBooksByAuthorId(Long authorId) {
@@ -48,6 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public Author createAuthor(CreateAuthorDTO createAuthorDTO) {
 
        Author author = modelMapper.map(createAuthorDTO, Author.class);
@@ -56,6 +54,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public Author updateAuthor(Long id, CreateAuthorDTO createAuthorDTO) {
 
         Author author = authorRepository.findById(id)
@@ -67,10 +66,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public void deleteAuthor(Long id) {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author with ID " + id + " not found"));
         authorRepository.delete(author);
     }
 
-    }
+}

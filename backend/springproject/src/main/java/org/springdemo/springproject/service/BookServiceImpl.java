@@ -1,25 +1,20 @@
 package org.springdemo.springproject.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springdemo.springproject.dto.CreateBookDTO;
 import org.springdemo.springproject.entity.*;
 import org.springdemo.springproject.exception.EntityNotFoundException;
-import org.springdemo.springproject.repository.AuthorRepository;
 import org.springdemo.springproject.repository.BookRepository;
 import org.springdemo.springproject.repository.CategoryRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
-public
-
-class BookServiceImpl implements BookService {
+@RequiredArgsConstructor
+public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
@@ -60,6 +55,7 @@ class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book createBook(CreateBookDTO createBookDTO) {
 
         Book newBook = modelMapper.map(createBookDTO, Book.class);
@@ -68,6 +64,7 @@ class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book updateBook(Long id, CreateBookDTO createBookDTO) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " not found, cannot update"));
@@ -77,11 +74,12 @@ class BookServiceImpl implements BookService {
         return bookRepository.save(existingBook);
     }
 
+    @Override
+    @Transactional
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
             throw new EntityNotFoundException("Book with ID " + id + " not found");
         }
         bookRepository.deleteById(id);
     }
-
 }

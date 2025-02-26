@@ -3,6 +3,7 @@ package org.springdemo.springproject.service;
 import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.entity.LogApi;
 import org.springdemo.springproject.repository.LogApiRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,9 @@ public class LogApiService {
 
     private final LogApiRepository logApiRepository;
 
+    @Async // runs in seperate thread
     public void saveLog(String method, String endpoint, String responseStatus, long executionTime, String logType , String message) {
+
         LogApi log = LogApi.builder()
                 .method(method)
                 .endpoint(endpoint)
@@ -25,4 +28,5 @@ public class LogApiService {
 
         logApiRepository.save(log);
     }
+
 }

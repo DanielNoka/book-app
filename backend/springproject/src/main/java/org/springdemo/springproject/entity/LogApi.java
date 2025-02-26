@@ -1,6 +1,7 @@
 package org.springdemo.springproject.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -17,13 +18,24 @@ public class LogApi { //descriptive name
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Method is required")
     private String method;
+
+    @NotNull(message = "Endpoint is required")
     private String endpoint;
+
+    @NotNull(message = "Response Status is required")
     private String responseStatus;
+
+    @NotNull(message = "ExecutionTime is required")
     private long executionTime; //todo: Long vs long
+
+    @NotNull(message = "Log type is required")
     private String logType;
+
     private String message;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
+
 }

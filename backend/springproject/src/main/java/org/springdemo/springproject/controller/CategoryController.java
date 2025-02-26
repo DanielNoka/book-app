@@ -1,7 +1,7 @@
 package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springdemo.springproject.dto.CategoryDTO;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.Category;
@@ -15,13 +15,13 @@ import static org.springdemo.springproject.util.Constants.OK;
 import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
 
-    CategoryService categoryService;
-    BookService bookService;
+    private final CategoryService categoryService;
+    private final BookService bookService;
 
     @GetMapping("/books/{categoryId}")
     public ApiResponse<List<Book>> getBooksByCategoryId(@PathVariable Long categoryId) {
@@ -64,7 +64,5 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return ApiResponse.map(null,OK, HttpStatus.NO_CONTENT);
     }
-
-
 
 }
