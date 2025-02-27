@@ -2,7 +2,6 @@ package org.springdemo.springproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.dto.CategoryDTO;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.Category;
@@ -16,18 +15,17 @@ import static org.springdemo.springproject.util.Constants.OK;
 import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final BookService bookService;
 
     @GetMapping("/books/{categoryId}")
     public ApiResponse<List<Book>> getBooksByCategoryId(@PathVariable Long categoryId) {
-        List<Book> books = bookService.getBooksByCategoryId(categoryId);
+        List<Book> books = categoryService.getBooksByCategoryId(categoryId);
         return  ApiResponse.map(books,OK,HttpStatus.OK);
     }
 

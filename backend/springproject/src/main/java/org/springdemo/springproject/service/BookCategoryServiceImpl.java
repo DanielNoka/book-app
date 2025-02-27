@@ -40,7 +40,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         bookCategory.setCategory(category);
 
         bookCategoryRepository.save(bookCategory);
-        log.info("Book with ID {} added successfully to Category ID {} {}", bookId ,  categoryId , category.getCategoryName());
+        log.info("Book with ID {} added successfully to Category ID {} & name {}", bookId ,  categoryId , category.getCategoryName());
 
     }
 }

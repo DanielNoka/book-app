@@ -22,72 +22,72 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
     private final ModelMapper modelMapper;
 
-    @Override
-    public List<Book> getBooksByAuthorId(Long authorId) {
-        log.info("Fetching books for author with ID {}", authorId);
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Author with ID " + authorId + " not found"));
+    private Author findAuthorById(Long id) {
+        return authorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author with ID " + id + " not found"));
+    }
 
-        List<Book> books =  author.getBookAuthors().stream()
+    @Override
+    @Transactional(readOnly = true) //improve performance
+    public List<Book> getBooksByAuthorId(Long authorId) {
+        log.info("Fetching books for author with ID {}...", authorId);
+        Author author = findAuthorById(authorId);
+
+        List<Book> books = author.getBookAuthors().stream()
                 .map(BookAuthor::getBook)
                 .collect(Collectors.toList());
+
         log.info("Found {} books for author with ID {}", books.size(), authorId);
         return books;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Author> getAll() {
-        log.info("Fetching all authors");
+        log.info("Fetching all authors...");
         List<Author> authors = authorRepository.findAll();
         log.info("Found {} authors", authors.size());
         return authors;
     }
 
     @Override
-    public Author getById(Long id) {
-        log.info("Fetching author with ID {}", id);
-        Author author = authorRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Author with ID " + id + " not found"));
-        log.info("Found author with ID {}", author.getId());
-        return author;
+    @Transactional(readOnly = true)
+    public Author getById(Long authorId) {
+        log.info("Fetching author with ID {}...", authorId);
+        Author author = findAuthorById(authorId);
+        log.info("Author with ID {} fetched successfully", authorId);
+        return findAuthorById(authorId);
     }
 
     @Override
     @Transactional
     public Author createAuthor(CreateAuthorDTO createAuthorDTO) {
-        log.info("Creating new author with name {}", createAuthorDTO.getName());
+        log.info("Creating new author with name {}...", createAuthorDTO.getName());
         Author author = modelMapper.map(createAuthorDTO, Author.class);
         Author savedAuthor = authorRepository.save(author);
-        log.info("Created new author with ID {}", savedAuthor.getId());
+        log.info("Author created with ID {}", savedAuthor.getId());
         return savedAuthor;
     }
 
+
     @Override
     @Transactional
-    public Author updateAuthor(Long id, CreateAuthorDTO createAuthorDTO) {
-        log.info("Updating author with ID {}", id);
-        Author author = authorRepository.findById(id)
-                .orElseThrow(() ->
-                     new EntityNotFoundException("Author with ID " + id + " not found"));
-
+    public Author updateAuthor(Long authorId, CreateAuthorDTO createAuthorDTO) {
+        log.info("Updating author with ID {}...", authorId);
+        Author author = findAuthorById(authorId);
         modelMapper.map(createAuthorDTO, author);
         Author updatedAuthor = authorRepository.save(author);
-        log.info("The author with ID {} is updated", updatedAuthor.getId());
+        log.info("Successfully updated author with ID {}", authorId);
         return updatedAuthor;
     }
 
     @Override
     @Transactional
-    public void deleteAuthor(Long id) {
-        log.info("Deleting author with ID {}", id);
-        Author author = authorRepository.findById(id)
-                .orElseThrow(() ->
-                    new EntityNotFoundException("Author with ID " + id + " not found"));
-
+    public void deleteAuthor(Long authorId) {
+        log.info("Deleting author with ID {}...", authorId);
+        Author author = findAuthorById(authorId);
         authorRepository.delete(author);
-        log.info("Author with ID {} is deleted", id);
+        log.info("Deleted author with ID {}", authorId);
     }
 
 }

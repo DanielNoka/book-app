@@ -22,79 +22,71 @@ public class BookServiceImpl implements BookService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
+    private Book findBookById(Long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + bookId + " not found"));
+    }
 
+    @Override
+    @Transactional(readOnly = true)
     public List<Author> getAuthorsByBookId(Long bookId) {
-        log.info("Fetching authors by book id {}", bookId);
-        List<Author> authors = bookRepository.findAuthorsByBookId(bookId);
+        log.info("Fetching authors by book id {}...", bookId);
+        findBookById(bookId); //Ensure book exists before fetching
 
+        List<Author> authors = bookRepository.findAuthorsByBookId(bookId);
         if (authors.isEmpty()) {
-            if (!bookRepository.existsById(bookId)) {
-                throw new EntityNotFoundException("Book with ID: " + bookId + " does not exist");
-            }
-            throw new EntityNotFoundException("Book with ID: " + bookId + " exists but has no authors");
+            throw new EntityNotFoundException("Book with ID: " + bookId + " exists but has no associated authors");
         }
         log.info("Found {} authors by book ID {}", authors.size(), bookId);
         return authors;
     }
 
     @Override
-    public List<Book> getBooksByCategoryId(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Category with ID " + categoryId + " not found"));
-
-        return category.getBookCategories().stream()
-                .map(BookCategory::getBook)
-                .collect(Collectors.toList());
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<Book> getAll() {
-        log.info("Getting all books");
+        log.info("Fetching all books...");
         List<Book> books = bookRepository.findAll();
         log.info("Found {} books", books.size());
         return books;
     }
 
     @Override
-    public Book getById(Long id) {
-        log.info("Getting book with ID {}", id);
-        Book book =  bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " not found"));
-        log.info("The book with ID {} is founded", book.getId());
+    @Transactional(readOnly = true)
+    public Book getById(Long bookId) {
+        log.info("Fetching book with ID: {}...", bookId);
+        Book book = findBookById(bookId);
+        log.info("Book with ID {} found", bookId);
         return book;
     }
 
     @Override
     @Transactional
     public Book createBook(CreateBookDTO createBookDTO) {
-        log.info("Creating book {}", createBookDTO);
+        log.info("Creating book with title: {}...", createBookDTO.getTitle());
         Book book = modelMapper.map(createBookDTO, Book.class);
         Book savedBook = bookRepository.save(book);
-        log.info("Book created with ID :{}", savedBook.getId());
-        return  savedBook;
+        log.info("Book created successfully with ID: {}", savedBook.getId());
+        return savedBook;
     }
 
     @Override
     @Transactional
-    public Book updateBook(Long id, CreateBookDTO createBookDTO) {
-        log.info("Updating book with ID {}", id);
-        Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " not found, cannot update"));
-
-        modelMapper.map(createBookDTO, existingBook);
-        Book updatedBook = bookRepository.save(existingBook);
-        log.info("Book with ID {} is updated", updatedBook.getId());
+    public Book updateBook(Long bookId, CreateBookDTO createBookDTO) {
+        log.info("Updating book with ID {}...", bookId);
+        Book book = findBookById(bookId);
+        modelMapper.map(createBookDTO, book);
+        Book updatedBook = bookRepository.save(book);
+        log.info("Successfully updated book with ID {}", bookId);
         return updatedBook;
     }
 
     @Override
     @Transactional
     public void deleteBook(Long id) {
-        log.info("Deleting book with ID {}", id);
-        if (!bookRepository.existsById(id)) {
-            throw new EntityNotFoundException("Book with ID " + id + " not found");
-        }
-        bookRepository.deleteById(id);
-        log.info("Book deleted with ID :{}", id);
+        log.info("Deleting book with ID: {}...", id);
+        Book book = findBookById(id); // Ensures book exists before deletion
+        bookRepository.delete(book);
+        log.info("Deleted book with ID: {}", id);
     }
+
 }
