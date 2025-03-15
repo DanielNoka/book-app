@@ -3,7 +3,7 @@ package org.springdemo.springproject.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springdemo.springproject.dto.CreateAuthorDTO;
+import org.springdemo.springproject.dto.AuthorDTO;
 import org.springdemo.springproject.entity.Author;
 import org.springdemo.springproject.entity.Book;
 import org.springdemo.springproject.entity.BookAuthor;
@@ -60,22 +60,29 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public List<Author> getAuthorsByNationality(String nationality) {
+        log.info("Fetching authors for nationality {}", nationality);
+        List<Author> authors = authorRepository.findByNationality(nationality);
+        log.info("Found {} authors for nationality {}", authors.size(), nationality);
+        return authors;
+    }
+
+    @Override
     @Transactional
-    public Author createAuthor(CreateAuthorDTO createAuthorDTO) {
-        log.info("Creating new author with name {}...", createAuthorDTO.getName());
-        Author author = modelMapper.map(createAuthorDTO, Author.class);
+    public Author createAuthor(AuthorDTO authorDTO) {
+        log.info("Creating new author with name {}...", authorDTO.getName());
+        Author author = modelMapper.map(authorDTO, Author.class);
         Author savedAuthor = authorRepository.save(author);
         log.info("Author created with ID {}", savedAuthor.getId());
         return savedAuthor;
     }
 
-
     @Override
     @Transactional
-    public Author updateAuthor(Long authorId, CreateAuthorDTO createAuthorDTO) {
+    public Author updateAuthor(Long authorId, AuthorDTO authorDTO) {
         log.info("Updating author with ID {}...", authorId);
         Author author = findAuthorById(authorId);
-        modelMapper.map(createAuthorDTO, author);
+        modelMapper.map(authorDTO, author);
         Author updatedAuthor = authorRepository.save(author);
         log.info("Successfully updated author with ID {}", authorId);
         return updatedAuthor;

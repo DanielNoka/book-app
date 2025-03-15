@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CreateBookDTO {
+public class BookDTO {
 
     @NotEmpty(message = "Title cannot be empty")
     @Size(max = 20, message = "Title should not exceed 20 characters")

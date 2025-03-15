@@ -9,10 +9,15 @@ import org.springdemo.springproject.entity.BookCategory;
 import org.springdemo.springproject.entity.Category;
 import org.springdemo.springproject.exception.EntityNotFoundException;
 import org.springdemo.springproject.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,7 +32,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category with ID " + categoryId + " not found"));
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -53,12 +57,24 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Category> searchCategoriesByName(String categoryName) {
-        log.info("Fetching categories by name {}...", categoryName);
-        List<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
-        log.info("Found {} categories by name {}", categories.size() , categoryName);
-        return categories;
+    public List<Book> getBooksByCategoryName(String categoryName) {
+        Category category = categoryRepository.findCategoriesByCategoryName(categoryName)
+                .orElseThrow(() -> new EntityNotFoundException("Category with name '" + categoryName + "' has no related books or doesnt exist"));
+        List<Book> books = category.getBookCategories().stream()
+                .map(BookCategory::getBook)
+                .collect(Collectors.toList());
+        log.info("Found {} books with category Name: {}", books.size(), categoryName);
+        return books;
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CategoryDTO> searchCategories(String categoryName, String categoryDescription, Pageable pageable) {
+        Page<Category> categories = categoryRepository.searchCategories(categoryName, categoryDescription, pageable);
+        return categories.map(category -> modelMapper.map(category, CategoryDTO.class));
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Category getById(Long categoryId) {

@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateAuthorDTO {
+public class AuthorDTO {
 
     @NotEmpty(message = "Name can't be empty")
     private String name;

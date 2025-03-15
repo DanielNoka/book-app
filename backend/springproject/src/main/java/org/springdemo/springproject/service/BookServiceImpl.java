@@ -3,13 +3,16 @@ package org.springdemo.springproject.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springdemo.springproject.dto.CreateBookDTO;
+import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.*;
 import org.springdemo.springproject.exception.EntityNotFoundException;
 import org.springdemo.springproject.repository.BookRepository;
-import org.springdemo.springproject.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +22,6 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
     private Book findBookById(Long bookId) {
@@ -31,22 +33,41 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public List<Author> getAuthorsByBookId(Long bookId) {
         log.info("Fetching authors by book id {}...", bookId);
-        findBookById(bookId); //Ensure book exists before fetching
+        Book book = findBookById(bookId); //Ensure book exists before fetching
 
-        List<Author> authors = bookRepository.findAuthorsByBookId(bookId);
-        if (authors.isEmpty()) {
-            throw new EntityNotFoundException("Book with ID: " + bookId + " exists but has no associated authors");
-        }
+        List<Author> authors = book.getBookAuthors().stream()
+                .map(BookAuthor::getAuthor)
+                        .collect(Collectors.toList());
         log.info("Found {} authors by book ID {}", authors.size(), bookId);
         return authors;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Book> getAll() {
+    public List<Book> findByYear(Integer year) {
+        if (year == null || year < 1000 || year > 9999) {
+            throw new IllegalArgumentException("Year must be a 4-digit number.");
+        }
+        List<Book> books = bookRepository.findByYear(year);
+        return books;
+    }
+
+    @Override
+    public List<Book> createBooks(List<BookDTO> bookDTOS) {
+        log.info("Creating books {}...", bookDTOS.size());
+
+        List<Book> books = new ArrayList<>();
+        for (BookDTO bookDTO : bookDTOS) {
+            Book savedBook = createBook(bookDTO);
+            books.add(savedBook);
+        }
+        log.info("Successfully inserted {} books", books.size());
+        return books;
+    }
+
+    @Override
+    public Page<Book> findAll( Pageable pageable) {
         log.info("Fetching all books...");
-        List<Book> books = bookRepository.findAll();
-        log.info("Found {} books", books.size());
+        Page<Book> books = bookRepository.findAll(pageable);
         return books;
     }
 
@@ -61,9 +82,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book createBook(CreateBookDTO createBookDTO) {
-        log.info("Creating book with title: {}...", createBookDTO.getTitle());
-        Book book = modelMapper.map(createBookDTO, Book.class);
+    public Book createBook(BookDTO bookDTO) {
+        log.info("Creating book with title: {}...", bookDTO.getTitle());
+        Book book = modelMapper.map(bookDTO, Book.class);
         Book savedBook = bookRepository.save(book);
         log.info("Book created successfully with ID: {}", savedBook.getId());
         return savedBook;
@@ -71,10 +92,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book updateBook(Long bookId, CreateBookDTO createBookDTO) {
+    public Book updateBook(Long bookId, BookDTO bookDTO) {
         log.info("Updating book with ID {}...", bookId);
         Book book = findBookById(bookId);
-        modelMapper.map(createBookDTO, book);
+        modelMapper.map(bookDTO, book);
         Book updatedBook = bookRepository.save(book);
         log.info("Successfully updated book with ID {}", bookId);
         return updatedBook;

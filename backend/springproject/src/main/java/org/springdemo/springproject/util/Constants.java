@@ -8,8 +8,13 @@ public class Constants {
     }
 
     public static  final String OK = "OK";
+
     public static  final String FAIL = "FAIL";
+
     public static  final String CREATED = "CREATED";
+
     public static  final String UPDATED = "UPDATED";
+
+    public static  final int PAGE_SIZE = 3;
 
 }

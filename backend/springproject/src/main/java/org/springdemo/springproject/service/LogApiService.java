@@ -36,5 +36,4 @@ public class LogApiService {
             log.error("Failed to save API log: {}", e.getMessage());
         }
     }
-
 }
