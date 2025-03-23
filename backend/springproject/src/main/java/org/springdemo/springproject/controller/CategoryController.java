@@ -22,8 +22,6 @@ import static org.springdemo.springproject.util.Constants.CREATED;
 import static org.springdemo.springproject.util.Constants.UPDATED;
 import  static  org.springdemo.springproject.util.Constants.PAGE_SIZE;
 
-
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")

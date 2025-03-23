@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder //REMOVE TO MANY .SET() CALLS FROM CLASS OBJECT
 @Table(name = "log_api")
-public class LogApi { //descriptive name
+public class LogApi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class LogApi { //descriptive name
     private String responseStatus;
 
     @NotNull(message = "ExecutionTime is required")
-    private long executionTime; //todo: Long vs long
+    private long executionTime;
 
     @NotNull(message = "Log type is required")
     private String logType;

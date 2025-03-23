@@ -56,7 +56,7 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Fetching author with ID {}...", authorId);
         Author author = findAuthorById(authorId);
         log.info("Author with ID {} fetched successfully", authorId);
-        return findAuthorById(authorId);
+        return author;
     }
 
     @Override

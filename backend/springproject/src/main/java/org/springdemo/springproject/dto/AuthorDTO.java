@@ -10,16 +10,17 @@ import lombok.Setter;
 @Setter
 public class AuthorDTO {
 
-    @NotEmpty(message = "Name can't be empty")
+    @NotEmpty(message = "Name is required")
     private String name;
 
-    @NotEmpty(message = "Surname can't be empty")
+    @NotEmpty(message = "Surname is required")
     private String surname;
 
+    @NotEmpty(message = "Email is required" )
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotEmpty(message = "Nationality cannot be empty")
+    @NotEmpty(message = "Nationality is required")
     private String nationality;
 
     @Size(max = 50, message = "Description should not exceed 50 characters")

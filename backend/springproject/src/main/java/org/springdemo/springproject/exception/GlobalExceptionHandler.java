@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdemo.springproject.service.LogApiService;
 import org.springdemo.springproject.util.ApiResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 import static org.springdemo.springproject.util.Constants.FAIL;
+import org.springframework.security.access.AccessDeniedException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,14 +23,25 @@ public class GlobalExceptionHandler {
 
     private final LogApiService logApiService;
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDeniedException(AccessDeniedException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "Forbidden");
+        response.put("message", ex.getMessage());
+        response.put("status", HttpStatus.FORBIDDEN.value());
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
     /**
      * Handles entity not found exception
      */
     @ExceptionHandler({EntityNotFoundException.class})
     public ApiResponse<String> handleNotFoundException(RuntimeException ex, WebRequest webRequest, HttpServletRequest request) {
         logAndSaveError(request, webRequest, HttpStatus.NOT_FOUND, ex);
-        return ApiResponse.map(null, ex.getMessage(), HttpStatus.NOT_FOUND);
+        return ApiResponse.map(null, ex.getMessage(),  HttpStatus.BAD_REQUEST);
     }
+
 
     /**
      * Handles validation errors (e.g., invalid input fields).

@@ -30,5 +30,4 @@ public class Book extends BaseEntity {
     @JsonIgnore
     private Set<BookAuthor> bookAuthors = new HashSet<>();
 
-    //todo: Set vs List vs HashNap [extends Collection<E>]
 }

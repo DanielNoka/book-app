@@ -17,4 +17,11 @@ public class Constants {
 
     public static  final int PAGE_SIZE = 3;
 
+    public static final String ADMIN = "ADMIN";
+
+    public static final String USER = "USER";
+
+    public static final String INVALID_TOKEN = "INVALID_TOKEN";
+
+    public static final String TOKEN_SUCCESS = "TOKEN_SUCCESS";
 }

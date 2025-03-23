@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Ignore sensitive files like application properties and .env
+application.properties
+.env
+
 ### STS ###
 .apt_generated
 .classpath

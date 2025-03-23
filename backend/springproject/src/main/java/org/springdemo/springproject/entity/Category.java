@@ -1,6 +1,5 @@
 package org.springdemo.springproject.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

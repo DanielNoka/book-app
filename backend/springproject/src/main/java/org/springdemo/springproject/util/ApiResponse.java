@@ -1,5 +1,6 @@
 package org.springdemo.springproject.util;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ public class ApiResponse<T> {
     private final T data; // Returned Data
     private final String message; //  Message for succes or failture
     private final HttpStatus status; //  HTTP status
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd 'T' HH:mm:ss")
     private LocalDateTime timestamp;
 
     public ApiResponse(T data, String message, HttpStatus status) {

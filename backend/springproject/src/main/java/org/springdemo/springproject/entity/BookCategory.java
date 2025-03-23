@@ -19,7 +19,7 @@ public class BookCategory {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "book_id", nullable = false) //todo: read about the comparison
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @ManyToOne(optional = false)

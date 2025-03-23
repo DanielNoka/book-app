@@ -7,6 +7,7 @@ import org.springdemo.springproject.dto.BookDTO;
 import org.springdemo.springproject.entity.*;
 import org.springdemo.springproject.exception.EntityNotFoundException;
 import org.springdemo.springproject.repository.BookRepository;
+import org.springdemo.springproject.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,9 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final MailService mailService;
 
     private Book findBookById(Long bookId) {
         return bookRepository.findById(bookId)
@@ -47,14 +50,13 @@ public class BookServiceImpl implements BookService {
         if (year == null || year < 1000 || year > 9999) {
             throw new IllegalArgumentException("Year must be a 4-digit number.");
         }
-        List<Book> books = bookRepository.findByYear(year);
-        return books;
+        return bookRepository.findByYear(year);
     }
 
     @Override
+    @Transactional
     public List<Book> createBooks(List<BookDTO> bookDTOS) {
         log.info("Creating books {}...", bookDTOS.size());
-
         List<Book> books = new ArrayList<>();
         for (BookDTO bookDTO : bookDTOS) {
             Book savedBook = createBook(bookDTO);
@@ -67,8 +69,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Page<Book> findAll( Pageable pageable) {
         log.info("Fetching all books...");
-        Page<Book> books = bookRepository.findAll(pageable);
-        return books;
+        return bookRepository.findAll(pageable);
     }
 
     @Override
@@ -80,11 +81,16 @@ public class BookServiceImpl implements BookService {
         return book;
     }
 
+    //send email to users
     @Override
     @Transactional
     public Book createBook(BookDTO bookDTO) {
+
+        //used to find emails
+        List<String> userEmails = userRepository.findAllEmails();
         log.info("Creating book with title: {}...", bookDTO.getTitle());
         Book book = modelMapper.map(bookDTO, Book.class);
+        mailService.sendMail(userEmails, bookDTO.getTitle());
         Book savedBook = bookRepository.save(book);
         log.info("Book created successfully with ID: {}", savedBook.getId());
         return savedBook;
