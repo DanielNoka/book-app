@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
-    @Query("SELECT a FROM Author a WHERE LOWER(a.nationality) LIKE LOWER(CONCAT('%', :nationality, '%'))")
+    //JPA Query
+    @Query(value = "SELECT a FROM Author a WHERE LOWER(a.nationality) LIKE LOWER(CONCAT('%', :nationality, '%'))")
     List<Author> findByNationality(@Param("nationality") String nationality);
+
 }

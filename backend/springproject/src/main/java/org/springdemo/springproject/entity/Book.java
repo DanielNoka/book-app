@@ -22,6 +22,9 @@ public class Book extends BaseEntity {
     @Column(name = "publish_year", columnDefinition = "DATE")
     private LocalDate publishYear;
 
+    @Column(name = "overall_rating")
+    private Double overallRating;
+
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<BookCategory> bookCategories = new HashSet<>();
@@ -29,5 +32,9 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<BookAuthor> bookAuthors = new HashSet<>();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private  List<BookReview> reviews = new ArrayList<>();
 
 }

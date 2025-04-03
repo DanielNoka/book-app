@@ -5,14 +5,13 @@ import io.jsonwebtoken.JwtException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdemo.springproject.entity.User;
 import org.springdemo.springproject.service.LogApiService;
 import org.springdemo.springproject.util.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,8 +23,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import static org.springdemo.springproject.util.Constants.FAIL;
 import static org.springdemo.springproject.util.Constants.INVALID_TOKEN;
 
@@ -48,8 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && !token.isBlank()) {
             try {
+
                 Authentication authentication = getAuthenticationFromToken(token, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             } catch (JwtException ex) {
                 log.warn(INVALID_TOKEN);
                 handleException(response, INVALID_TOKEN, HttpStatus.UNAUTHORIZED.value());
@@ -70,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 handleException(response, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return;
             }
-        }else{
+        } else {
             log.warn("No token found");
         }
         chain.doFilter(request, response);
@@ -86,21 +85,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Authentication getAuthenticationFromToken(String token, HttpServletRequest request) {
 
-            if (!jwtUtil.validateToken(token)) {
-                throw new JwtException("Token validation failed");
-            }
+        if (!jwtUtil.validateToken(token)) {
+            throw new JwtException("Token validation failed");
+        }
 
-            String username = jwtUtil.extractUsername(token);
-            String role = jwtUtil.extractRole(token);
+        // Extract user details from the token
+        String username = jwtUtil.extractUsername(token);
+        log.info("Extracted username from token: {}", username);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+        // Load the user entity
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        log.info("UserDetailsService returned: {}", userDetails.getClass().getSimpleName());
 
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        // Check if userDetails is actually a User instance
+        if (!(userDetails instanceof User)) {
+            log.error("UserDetails is not an instance of User! Found: " + userDetails.getClass().getSimpleName());
+        }
 
-            return authToken;
+        User user = (User) userDetails; // Safe casting now
+
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        return authToken;
     }
 
     private void handleException(HttpServletResponse response, String message, int statusCode) throws IOException {

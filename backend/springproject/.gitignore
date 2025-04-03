@@ -1,14 +1,10 @@
-HELP.md
+# Ignore the generated files and folders in the build process
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Ignore sensitive files like application properties and .env
-application.properties
-.env
-
-### STS ###
+### STS (Spring Tool Suite) ###
 .apt_generated
 .classpath
 .factorypath
@@ -35,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore IDE and build system files
+.DS_Store
+Thumbs.db

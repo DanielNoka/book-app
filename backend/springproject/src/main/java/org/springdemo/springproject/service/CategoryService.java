@@ -16,6 +16,5 @@ public interface CategoryService {
     void deleteCategory(Long id);
     List<Book> getBooksByCategoryId(Long categoryId);
     List<Book> getBooksByCategoryName(String categoryName);
-
     Page<CategoryDTO> searchCategories(String categoryName, String categoryDescription, Pageable pageable);
 }

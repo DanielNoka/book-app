@@ -19,7 +19,7 @@ public class BookAuthor {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "book_id", nullable = false) // bookid ForeignKey from Book
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @ManyToOne(optional = false)

@@ -27,7 +27,6 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> map (T data, String message, HttpStatus status) {
         return new ApiResponse<>(data, message, status);
     }
-
-
+    
 }
 

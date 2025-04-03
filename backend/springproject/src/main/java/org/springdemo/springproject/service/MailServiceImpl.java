@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import static org.springdemo.springproject.util.Constants.EMAIL_REGEX;
 
 @Service
 @Slf4j
@@ -15,8 +16,6 @@ import org.springframework.stereotype.Service;
 public class MailServiceImpl implements  MailService {
 
     private final JavaMailSender mailSender;
-
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     @Async
     public void sendMail(List<String> emailList, String bookTitle) {

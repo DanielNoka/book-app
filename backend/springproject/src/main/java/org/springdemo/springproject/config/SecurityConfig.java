@@ -44,12 +44,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use JWT (stateless)
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, RESOURCE_ENDPOINTS).hasAnyAuthority(USER, ADMIN)
                         .requestMatchers(HttpMethod.POST, RESOURCE_ENDPOINTS).hasAnyAuthority(USER, ADMIN)
                         .requestMatchers(HttpMethod.PUT, RESOURCE_ENDPOINTS).hasAnyAuthority(USER, ADMIN)
                         .requestMatchers(HttpMethod.DELETE, RESOURCE_ENDPOINTS).hasAuthority(ADMIN)  // Only ADMIN can DELETE
+                        .requestMatchers("/reviews/**", "/manage_users/**").hasAuthority(ADMIN) //Only Admin access
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling

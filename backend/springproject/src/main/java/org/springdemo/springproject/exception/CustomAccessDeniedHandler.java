@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springdemo.springproject.util.Constants.FAIL;
 
-//Used for authorization example a user want to access delete endpoints
+//Used for authorization when a user want to access delete endpoints
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 

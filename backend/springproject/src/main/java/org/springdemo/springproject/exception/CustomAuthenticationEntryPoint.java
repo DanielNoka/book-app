@@ -10,13 +10,11 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import static org.springdemo.springproject.util.Constants.FAIL;
 
-//Used for private endpoints
+//Used for accessing endpoints which require tokens
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-    // Constants for fail message
-    public static final String FAIL = "FAIL";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {

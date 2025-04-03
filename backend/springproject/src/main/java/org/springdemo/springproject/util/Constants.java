@@ -24,4 +24,10 @@ public class Constants {
     public static final String INVALID_TOKEN = "INVALID_TOKEN";
 
     public static final String TOKEN_SUCCESS = "TOKEN_SUCCESS";
+
+    public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+    public static final int OTP_EXPIRATION_TIME = 10;
+
+    public static final String SUCCESS = "SUCCESS";
 }

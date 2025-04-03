@@ -1,6 +1,7 @@
 package org.springdemo.springproject.config;
 
 
+import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,7 +14,7 @@ public class CorsConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all endpoints to be accessed
                         .allowedOrigins("http://localhost:3000") // From this port
                         .allowedMethods("GET", "POST", "PUT", "DELETE");
